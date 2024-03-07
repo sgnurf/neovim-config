@@ -1,5 +1,7 @@
 return {
     {
-        'github/copilot.vim'
+        'github/copilot.vim',
+        'tpope/vim-sleuth',
+        'numToStr/Comment.nvim',
     }
 }

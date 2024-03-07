@@ -3,18 +3,59 @@ return {
     dependencies = {
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
-        "hrsh7th/cmp-nvim-lsp",
-        "hrsh7th/cmp-buffer",
-        "hrsh7th/cmp-path",
-        "hrsh7th/cmp-cmdline",
-        "hrsh7th/nvim-cmp",
-        "L3MON4D3/LuaSnip",
-        "saadparwaiz1/cmp_luasnip",
         "j-hui/fidget.nvim",
     },
 
     config = function()
-        local cmp = require('cmp')
+        vim.api.nvim_create_autocmd('LspAttach', {
+            group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+            callback = function(ev)
+                -- Enable completion triggered by <c-x><c-o>
+                vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+                local map = function(key, f, desc)
+                    vim.keymap.set('n', key, f, { buffer = ev.buf, desc = desc })
+                end
+
+                local tb = require('telescope.builtin');
+                map('gD', vim.lsp.buf.declaration, 'Go to declaration')
+                map('gd', tb.lsp_definitions, 'Go to definition')
+                map('gr', tb.lsp_references, 'Go to references')
+                map('gi', tb.lsp_implementations, 'Go to implementation')
+                map('K', vim.lsp.buf.hover, 'Show hover')
+                map('<leader>ds', tb.lsp_document_symbols, 'Show document symbols')
+                map('<leader>ws', tb.lsp_workspace_symbols, 'Show workspace symbols')
+                map('<leader>D', tb.lsp_type_definitions, 'Show type definition')
+                map('<leader>ca', vim.lsp.buf.code_action, 'Show code actions')
+                map('<leader>rn', vim.lsp.buf.rename, 'Rename')
+                map('<leader>f', function()
+                    vim.lsp.buf.format { async = true }
+                end, 'Format')
+            end,
+        })
+
+        local servers = {
+            lua_ls = {
+                settings = {
+                    Lua = {
+                        runtime = { version = 'LuaJIT' },
+                        workspace = {
+                            checkThirdParty = false,
+                            library = {
+                                '${3rd}/luv/library',
+                                unpack(vim.api.nvim_get_runtime_file('', true)),
+                            },
+                        },
+                        completion = {
+                            callSnippet = 'Replace',
+                        },
+                    },
+                },
+            },
+            rust_analyzer = {},
+            tsserver = {},
+        }
+
         local cmp_lsp = require("cmp_nvim_lsp")
         local capabilities = vim.tbl_deep_extend(
             "force",
@@ -24,42 +65,20 @@ return {
 
         require("fidget").setup({})
         require("mason").setup()
-        require("mason-lspconfig").setup({
-            ensure_installed = {
-                "lua_ls",
-                "rust_analyzer",
-                "tsserver",
-            },
-            handlers = {
-                function(server_name) -- default handler (optional)
 
-                    require("lspconfig")[server_name].setup {
-                        capabilities = capabilities
-                    }
-                end,
-            }
+        local ensure_installed = vim.tbl_keys(servers or {})
+        vim.list_extend(ensure_installed, {
         })
 
-        local cmp_select = { behavior = cmp.SelectBehavior.Select }
-
-        cmp.setup({
-            snippet = {
-                expand = function(args)
-                    require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        require("mason-lspconfig").setup({
+            ensure_installed = ensure_installed,
+            handlers = {
+                function(server_name)
+                    local server = servers[server_name] or {}
+                    server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+                    require('lspconfig')[server_name].setup(server)
                 end,
-            },
-            mapping = cmp.mapping.preset.insert({
-                ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-                ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-                ["<C-Space>"] = cmp.mapping.complete(),
-            }),
-            sources = cmp.config.sources({
-                { name = 'nvim_lsp' },
-                { name = 'luasnip' }, -- For luasnip users.
-            }, {
-                { name = 'buffer' },
-            })
+            }
         })
 
         vim.diagnostic.config({
