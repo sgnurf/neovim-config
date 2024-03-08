@@ -8,4 +8,4 @@ vim.keymap.set("n","N", "Nzz", {desc = "Move to previous search result"})
 vim.keymap.set("x", "<leader>p", [["_dP]], {desc = "Paste without overwriting clipboard"})
 vim.keymap.set("n","<leader>o", "o<ESC>", {desc = "Insert new line below and enter insert mode"})
 vim.keymap.set("n","<leader>O", "O<ESC>", {desc = "Insert new line above and enter insert mode"})
-
+vim.keymap.set("n",",", vim.cmd.redo, {desc = "Redo"})
