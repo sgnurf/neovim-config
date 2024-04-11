@@ -9,3 +9,5 @@ vim.keymap.set("x", "<leader>p", [["_dP]], {desc = "Paste without overwriting cl
 vim.keymap.set("n","<leader>o", "o<ESC>", {desc = "Insert new line below and enter insert mode"})
 vim.keymap.set("n","<leader>O", "O<ESC>", {desc = "Insert new line above and enter insert mode"})
 vim.keymap.set("n",",", vim.cmd.redo, {desc = "Redo"})
+vim.keymap.set("n","<C-j>", "<cmd>cnext<CR>zz", {desc = "Go to next quickfix item"})
+vim.keymap.set("n","<C-k>", "<cmd>cprev<CR>zz", {desc = "Go to previous quickfix item"})
