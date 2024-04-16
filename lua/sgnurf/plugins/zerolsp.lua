@@ -31,6 +31,7 @@ return {
                 map('<leader>f', function()
                     vim.lsp.buf.format { async = true }
                 end, 'Format')
+                vim.keymap.set('v', '<leader>ca', vim.lsp.buf.code_action, { buffer = ev.buf, desc = 'Show code actions' })
             end,
         })
 
