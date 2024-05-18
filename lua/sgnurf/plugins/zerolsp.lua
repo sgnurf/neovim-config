@@ -93,5 +93,6 @@ return {
                 prefix = "",
             },
         })
+        vim.filetype.add({ extension = { templ = "templ" } })
     end
 }

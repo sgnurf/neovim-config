@@ -32,3 +32,6 @@ vim.opt.colorcolumn = "80"
 vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 
+--Test to see if I like this
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
+vim.opt.shortmess:append("c")

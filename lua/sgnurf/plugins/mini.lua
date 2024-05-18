@@ -1,9 +1,8 @@
 return {
   'echasnovski/mini.nvim',
   config = function()
-    local ms = require('mini.surround')
-
-    ms.setup()
+    require("mini.ai").setup()
+    require("mini.surround").setup()
 
     vim.keymap.set('n','yss',
     function()
