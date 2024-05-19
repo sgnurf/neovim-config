@@ -11,7 +11,7 @@ return {
         }
       }
 
-      vim.keymap.set("n", "<leader>o", function() oil.open() end, { desc = "Open oil for current directory"})
+      vim.keymap.set("n", "<leader>o", function() oil.open() end, { desc = "Open oil for current directory" })
     end,
   },
 }
